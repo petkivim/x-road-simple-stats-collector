@@ -4,7 +4,18 @@
   "description": "A simple statistics collector for the X-Road that reads the number of members, security servers, subsystems and number of members per member class from global configuration",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
+    "lint": "eslint --ignore-path .gitignore .",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "eslintConfig": {
+    "parserOptions": {
+      "ecmaVersion": 6
+    },
+    "env": {
+      "browser": false,
+      "node": true
+    }
   },
   "keywords": [],
   "author": "Petteri Kivimäki",
@@ -17,5 +28,13 @@
     "axios": "^0.18.0",
     "string-search": "^1.2.0",
     "xmldoc": "^1.1.0"
+  },
+  "devDependencies": {
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.11.0",
+    "eslint-plugin-jsx-a11y": "^6.0.3",
+    "eslint-plugin-react": "^7.7.0"
   }
 }

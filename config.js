@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-var config = module.exports = {}
+const config = module.exports = {}
 
 // N.B.! Configure only 1) config.anchorPath OR 2) config.url, but NOT both
 // at the same time. In case both are configured config.anchorPath is used.
@@ -29,8 +29,8 @@ var config = module.exports = {}
 // Path to locally stored configuration anchor file
 config.anchorPath = '/path/to/configuration_anchor.xml'
 
-// Config global conf directory URL - "downloadURL" from configuration anchor
-//config.url = 'http://xxx.xxx.xxx.xxx/internalconf'
+// Global conf directory URL - "downloadURL" from configuration anchor
+// config.url = 'http://xxx.xxx.xxx.xxx/internalconf'
 
 // Shared parameters configuration part name
 config.sharedParams = 'SHARED-PARAMETERS'

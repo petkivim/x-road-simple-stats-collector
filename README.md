@@ -79,7 +79,7 @@ config.url = 'http://xxx.xxx.xxx.xxx/internalconf'
 Run the script:
 
 ```
-node index.js
+npm start
 ```
 
 ## Configuration

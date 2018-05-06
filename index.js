@@ -22,14 +22,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-var tools = require('./functions.js')
+const tools = require('./functions.js')
 const cfg = require('./config.js')
 
-if(cfg.anchorPath) {
+if (cfg.anchorPath) {
   console.log('Use configuration anchor path.')
-  const anchorData = tools.readConfAnchor(cfg.anchorPath);
+  const anchorData = tools.readConfAnchor(cfg.anchorPath)
   tools.getDirectory(anchorData.downloadURL, anchorData.verificationCert)
-} else if(cfg.url) {
+} else if (cfg.url) {
   console.log('Use URL.')
   tools.getDirectory(cfg.url)
 } else {
