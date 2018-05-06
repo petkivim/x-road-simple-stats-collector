@@ -50,8 +50,8 @@ file. The output method is configurable. This is how the results look like:
 ## Prerequisites
 
 * git
-* npm
-* Node.js
+* npm (tested with v6.0.0)
+* Node.js (tested with v9.8.0)
 
 ## Try it
 
