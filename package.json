@@ -1,9 +1,7 @@
 {
   "name": "x-road-simple-stats-collector",
   "version": "1.0.0",
-  "description": "A simple statistics collector for the X-Road that reads
-    the number of members, security servers, subsystems and number of members
-    per member class from global configuration",
+  "description": "A simple statistics collector for the X-Road that reads the number of members, security servers, subsystems and number of members per member class from global configuration",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -11,6 +9,10 @@
   "keywords": [],
   "author": "Petteri Kivimäki",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/petkivim/x-road-simple-stats-collector.git"
+  },
   "dependencies": {
     "axios": "^0.18.0",
     "string-search": "^1.2.0",

@@ -95,7 +95,6 @@ function verifySignature(directory, configURL, verificationCert, signature) {
       // Read directory content included in the signature.
       // The content starts from the boundary of the first part that
       // contains the expire date.
-      //const signedData = directory.match(/^Content-Type: multipart\/mixed.+?boundary=(.+?)$[\W\w]+?(^--\1[\W\w]+\1(--$[\W\w]{0,2}|$))/mi)[2]
       const signedData = directory.match(/^Content-Type: multipart\/mixed.+?boundary=(.+?)$[\W\w]+?(^--\1[\W\w]+\1(--|)[\n\r]*?)[\n\r]{0,2}--/mi)[2]
 
       // Create a Verify object
