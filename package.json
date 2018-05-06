@@ -8,15 +8,6 @@
     "lint": "eslint --ignore-path .gitignore .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "eslintConfig": {
-    "parserOptions": {
-      "ecmaVersion": 6
-    },
-    "env": {
-      "browser": false,
-      "node": true
-    }
-  },
   "keywords": [],
   "author": "Petteri Kivimäki",
   "license": "MIT",
