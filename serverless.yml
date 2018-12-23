@@ -1,0 +1,45 @@
+service: x-road-simple-stats-collector
+custom:
+  s3bucket: <S3_BUCKET>
+provider:
+  name: aws
+  region: eu-central-1
+  stage: prod
+  runtime: nodejs6.10
+  versionFunctions: false
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - s3:PutObject
+        - s3:PutObjectAcl
+      Resource:
+        - "arn:aws:s3:::${self:custom.s3bucket}/*"
+  environment:
+    S3_BUCKET: ${self:custom.s3bucket}
+    RANDOM_RESULTS_FILE: true
+functions:
+  collectAndStoreStats:
+    name: collectAndStoreStats
+    handler: handler.collectAndStore
+    events:
+    - schedule:
+        name: <INSTANCE_IDENTIFIER>
+        #rate: cron(*/2 * * * ? *)
+        rate: cron(0 23 * * ? *)
+        input:
+          url: "<URL>"
+        enabled: true
+package:
+  individually: true
+  include:
+    - node_modules/**
+    - config.js
+    - functions.js
+  exclude:
+    - index.js
+resources:
+  Resources:
+    S3Assets:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:custom.s3bucket}
