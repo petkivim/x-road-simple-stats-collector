@@ -96,5 +96,9 @@ Configuration parameters are defined in the `config.js` file.
 | config.randomResultsFile | Use a random UUID as a results file's name (`true` or `false`). If `true`, `config.resultsFile ` is ignored. If `false`, `config.resultsFile` is used. |
 | config.resultsToConsole | Print results to console (`true` or `false`). |
 
+Parameters `config.anchorPath` and `config.url` can be set using environment
+variables `ANCHOR_PATH` and `URL` too. Environment variables have preference
+over configuration file.
+
 **N.B.!** Configure only 1) `config.anchorPath` OR 2) `config.url`, but NOT both
 at the same time. In case both are configured `config.anchorPath` is used.

@@ -25,13 +25,16 @@
 const tools = require('./functions.js')
 const cfg = require('./config.js')
 
-if (cfg.anchorPath) {
+const anchorPath = process.env.ANCHOR_PATH || cfg.anchorPath
+const url = process.env.URL || cfg.url
+
+if (anchorPath) {
   console.log('Use configuration anchor path.')
-  const anchorData = tools.readConfAnchor(cfg.anchorPath)
+  const anchorData = tools.readConfAnchor(anchorPath)
   tools.getDirectory(anchorData.downloadURL, anchorData.verificationCert)
-} else if (cfg.url) {
+} else if (url) {
   console.log('Use URL.')
-  tools.getDirectory(cfg.url)
+  tools.getDirectory(url)
 } else {
   console.log('No \'cfg.anchorPath\' or \'cfg.url\' configured - nothing to do here.')
 }

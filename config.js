@@ -27,7 +27,7 @@ const config = module.exports = {}
 // at the same time. In case both are configured config.anchorPath is used.
 
 // Path to locally stored configuration anchor file
-config.anchorPath = '/path/to/configuration_anchor.xml'
+// config.anchorPath = '/path/to/configuration_anchor.xml'
 
 // Global conf directory URL - "downloadURL" from configuration anchor
 // config.url = 'http://xxx.xxx.xxx.xxx/internalconf'
