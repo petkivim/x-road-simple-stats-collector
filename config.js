@@ -40,5 +40,7 @@ config.verificationCertificateHash = 'verification-certificate-hash'
 config.resultsFile = 'results.json'
 // Use random results file name.
 config.randomResultsFile = false
+// Upload results to S3 instead of storing them locally.
+// config.s3Bucket = 'test-bucket'
 // Print results to console.
 config.resultsToConsole = true

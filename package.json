@@ -16,6 +16,7 @@
     "url": "https://github.com/petkivim/x-road-simple-stats-collector.git"
   },
   "dependencies": {
+    "aws-sdk": "^2.377.0",
     "axios": "^0.18.0",
     "string-search": "^1.2.0",
     "uuid": "^3.3.2",

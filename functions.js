@@ -29,17 +29,42 @@ const crypto = require('crypto')
 const fs = require('fs')
 const url = require('url')
 const uuidv4 = require('uuid/v4')
+const AWS = require('aws-sdk')
 
+function uploadToS3(content, resultsFile, bucket) {
+  console.log('Execute \'uploadToS3\'.')
+  const s3 = new AWS.S3()
+  s3.putObject({
+    Bucket: bucket,
+    Key: resultsFile,
+    Body: content,
+    ACL: 'private',
+  }, (err, response) => {
+    if (err) {
+      console.log(err)
+      console.log('Failed to upload results to S3.')
+    } else {
+      console.log(response)
+      console.log('Successfully uploaded results to S3.')
+    }
+  })
+}
 function writeToFile(content) {
   console.log('Execute \'writeToFile\'.')
+  const s3Bucket = process.env.S3_BUCKET || cfg.s3Bucket
   const resultsFile = cfg.randomResultsFile ? `${uuidv4()}.json` : cfg.resultsFile
-  console.log(`Save results to file '${resultsFile}'.`)
-  fs.writeFile(resultsFile, content, 'utf8', (err) => {
-    if (err) {
-      return console.log(err)
-    }
-    return console.log('The file was saved!')
-  })
+  if (s3Bucket) {
+    console.log(`Upload results to S3 bucket '${s3Bucket}/${resultsFile}'.`)
+    uploadToS3(content, resultsFile, s3Bucket)
+  } else {
+    console.log(`Save results to file '${resultsFile}'.`)
+    fs.writeFile(resultsFile, content, 'utf8', (err) => {
+      if (err) {
+        return console.log(err)
+      }
+      return console.log('The file was saved!')
+    })
+  }
 }
 
 function parseSharedParams(sharedParams, sharedParamsInfo) {

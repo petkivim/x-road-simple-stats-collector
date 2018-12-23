@@ -95,9 +95,10 @@ Configuration parameters are defined in the `config.js` file.
 | config.resultsFile | File where the results are saved. Leave the value empty or comment out the parameter if you don't to save the results in a file. |
 | config.randomResultsFile | Use a random UUID as a results file's name (`true` or `false`). If `true`, `config.resultsFile ` is ignored. If `false`, `config.resultsFile` is used. |
 | config.resultsToConsole | Print results to console (`true` or `false`). |
+| config.s3Bucket | Upload results to S3 instead of storing them locally. |
 
-Parameters `config.anchorPath` and `config.url` can be set using environment
-variables `ANCHOR_PATH` and `URL` too. Environment variables have preference
+Parameters `config.anchorPath`, `config.url` and `s3Bucket` can be set using environment
+variables `ANCHOR_PATH`, `URL` and `S3_BUCKET` too. Environment variables have preference
 over configuration file.
 
 **N.B.!** Configure only 1) `config.anchorPath` OR 2) `config.url`, but NOT both
