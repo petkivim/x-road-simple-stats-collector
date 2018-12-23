@@ -97,8 +97,9 @@ Configuration parameters are defined in the `config.js` file.
 | config.resultsToConsole | Print results to console (`true` or `false`). |
 | config.s3Bucket | Upload results to S3 instead of storing them locally. |
 
-Parameters `config.anchorPath`, `config.url` and `s3Bucket` can be set using environment
-variables `ANCHOR_PATH`, `URL` and `S3_BUCKET` too. Environment variables have preference
+Parameters `config.anchorPath`, `config.url`, `config.randomResultsFile` and
+`s3Bucket` can be set using environment variables `ANCHOR_PATH`, `URL`,
+`RANDOM_RESULTS_FILE` and `S3_BUCKET` too. Environment variables have preference
 over configuration file.
 
 **N.B.!** Configure only 1) `config.anchorPath` OR 2) `config.url`, but NOT both

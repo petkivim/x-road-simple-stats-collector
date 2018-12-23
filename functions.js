@@ -52,7 +52,8 @@ function uploadToS3(content, resultsFile, bucket) {
 function writeToFile(content) {
   console.log('Execute \'writeToFile\'.')
   const s3Bucket = process.env.S3_BUCKET || cfg.s3Bucket
-  const resultsFile = cfg.randomResultsFile ? `${uuidv4()}.json` : cfg.resultsFile
+  const randomResultsFile = process.env.RANDOM_RESULTS_FILE || cfg.randomResultsFile
+  const resultsFile = randomResultsFile ? `${uuidv4()}.json` : cfg.resultsFile
   if (s3Bucket) {
     console.log(`Upload results to S3 bucket '${s3Bucket}/${resultsFile}'.`)
     uploadToS3(content, resultsFile, s3Bucket)
