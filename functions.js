@@ -28,11 +28,13 @@ const xmldoc = require('xmldoc')
 const crypto = require('crypto')
 const fs = require('fs')
 const url = require('url')
+const uuidv4 = require('uuid/v4')
 
 function writeToFile(content) {
   console.log('Execute \'writeToFile\'.')
-  console.log(`Save results to file '${cfg.resultsFile}'.`)
-  fs.writeFile(cfg.resultsFile, content, 'utf8', (err) => {
+  const resultsFile = cfg.randomResultsFile ? `${uuidv4()}.json` : cfg.resultsFile
+  console.log(`Save results to file '${resultsFile}'.`)
+  fs.writeFile(resultsFile, content, 'utf8', (err) => {
     if (err) {
       return console.log(err)
     }

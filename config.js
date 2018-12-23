@@ -38,5 +38,7 @@ config.sharedParams = 'SHARED-PARAMETERS'
 config.verificationCertificateHash = 'verification-certificate-hash'
 // File where the results are saved.
 config.resultsFile = 'results.json'
+// Use random results file name.
+config.randomResultsFile = false
 // Print results to console.
 config.resultsToConsole = true
