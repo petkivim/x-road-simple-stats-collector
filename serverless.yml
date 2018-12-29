@@ -7,13 +7,6 @@ provider:
   stage: prod
   runtime: nodejs6.10
   versionFunctions: false
-  iamRoleStatements:
-    - Effect: "Allow"
-      Action:
-        - s3:PutObject
-        - s3:PutObjectAcl
-      Resource:
-        - "arn:aws:s3:::${self:custom.s3bucket}/*"
   environment:
     S3_BUCKET: ${self:custom.s3bucket}
     RANDOM_RESULTS_FILE: true
@@ -21,6 +14,7 @@ functions:
   collectAndStoreStats:
     name: collectAndStoreStats
     handler: handler.collectAndStore
+    role: CollectAndStoreStatsRole
     events:
     - schedule:
         name: <INSTANCE_IDENTIFIER>
@@ -43,3 +37,39 @@ resources:
       Type: AWS::S3::Bucket
       Properties:
         BucketName: ${self:custom.s3bucket}
+    CollectAndStoreStatsRole:
+      Type: AWS::IAM::Role
+      Properties:
+        RoleName: CollectAndStoreStatsRole
+        AssumeRolePolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                  - lambda.amazonaws.com
+              Action: sts:AssumeRole
+        Policies:
+          - PolicyName: CollectAndStoreStatsRolePolicy
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - logs:CreateLogGroup
+                    - logs:CreateLogStream
+                    - logs:PutLogEvents
+                  Resource:
+                    - 'Fn::Join':
+                      - ':'
+                      -
+                        - 'arn:aws:logs'
+                        - Ref: 'AWS::Region'
+                        - Ref: 'AWS::AccountId'
+                        - 'log-group:/aws/lambda/*:*:*'
+                - Effect: "Allow"
+                  Action:
+                    - s3:PutObject
+                    - s3:PutObjectAcl
+                  Resource:
+                    - 'arn:aws:s3:::${self:custom.s3bucket}/*'
