@@ -23,8 +23,9 @@
  */
 const tools = require('./functions.js')
 const cfg = require('./config.js')
+const util = require('util')
 
-module.exports.collectAndStore = (event, context, callback) => {
+module.exports.collectAndStoreStats = (event, context, callback) => {
   console.time('x-road-simple-stats-collector')
   console.log('Event object:')
   console.log(event)
@@ -42,6 +43,21 @@ module.exports.collectAndStore = (event, context, callback) => {
   } else {
     console.log('No \'cfg.anchorPath\' or \'cfg.url\' configured - nothing to do here.')
   }
+
+  console.timeEnd('x-road-simple-stats-collector')
+  callback(null)
+}
+
+module.exports.processStats = (event, context, callback) => {
+  console.time('x-road-simple-stats-collector')
+  console.log('Reading options from event:\n', util.inspect(event, { depth: 5 }))
+
+  const srcBucket = event.Records[0].s3.bucket.name
+  const srcKey = event.Records[0].s3.object.key
+
+  // Reads the object from S3, stores it to DynamoDB and removes the object
+  // from S3.
+  tools.fromS3ToDynamo(srcBucket, srcKey)
 
   console.timeEnd('x-road-simple-stats-collector')
   callback(null)

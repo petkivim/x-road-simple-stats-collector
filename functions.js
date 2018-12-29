@@ -31,6 +31,75 @@ const url = require('url')
 const uuidv4 = require('uuid/v4')
 const AWS = require('aws-sdk')
 
+function deleteFromS3(bucket, key) {
+  console.log('Execute \'deleteFromS3\'.')
+  const s3 = new AWS.S3()
+  s3.deleteObject({
+    Bucket: bucket,
+    Key: key,
+  }, (err, response) => {
+    if (err) {
+      console.log(err, err.stack)
+      throw new Error(`Failed to delete object (${bucket}/${key}) from S3.`)
+    } else {
+      console.log(response)
+      console.log(`Succesfully deleted object (${bucket}/${key}) from S3.`)
+    }
+  })
+}
+
+function writeHistoryToDynamoDb(data, bucket, key) {
+  const dynamoTableHistory = process.env.DYNAMO_TABLE_HISTORY
+
+  if (!dynamoTableHistory) {
+    console.log(`"dynamoTableHistory": ${dynamoTableHistory}`)
+    throw new Error('DynamoDB table "dynamoTableHistory" is not configured correctly.')
+  }
+
+  const docClient = new AWS.DynamoDB.DocumentClient()
+
+  docClient.put({
+    TableName: dynamoTableHistory,
+    Item: data,
+  }, (err, response) => {
+    if (err) {
+      console.log(err, err.stack)
+      throw new Error('Failed to add new item to DynamoDB.')
+    } else {
+      console.log(response)
+      console.log('Successfully added new item to DynamoDB.')
+      // Delete object from S3 when it has been succesfully added to DynamoDB
+      deleteFromS3(bucket, key)
+    }
+  })
+}
+
+function writeCurrentToDynamoDb(data, bucket, key) {
+  const dynamoTableCurrent = process.env.DYNAMO_TABLE_CURRENT
+
+  if (!dynamoTableCurrent) {
+    console.log(`"dynamoTableCurrent": ${dynamoTableCurrent}`)
+    throw new Error('DynamoDB table "dynamoTableCurrent" is not configured correctly.')
+  }
+
+  const docClient = new AWS.DynamoDB.DocumentClient()
+
+  docClient.put({
+    TableName: dynamoTableCurrent,
+    Item: data,
+  }, (err, response) => {
+    if (err) {
+      console.log(err, err.stack)
+      throw new Error('Failed to add new item to DynamoDB.')
+    } else {
+      console.log(response)
+      console.log('Successfully added new item to DynamoDB.')
+      // Add object to history table too
+      writeHistoryToDynamoDb(data, bucket, key)
+    }
+  })
+}
+
 function uploadToS3(content, resultsFile, bucket) {
   console.log('Execute \'uploadToS3\'.')
   const s3 = new AWS.S3()
@@ -41,14 +110,15 @@ function uploadToS3(content, resultsFile, bucket) {
     ACL: 'private',
   }, (err, response) => {
     if (err) {
-      console.log(err)
-      console.log('Failed to upload results to S3.')
+      console.log(err, err.stack)
+      throw new Error('Failed to upload results to S3.')
     } else {
       console.log(response)
       console.log('Successfully uploaded results to S3.')
     }
   })
 }
+
 function writeToFile(content) {
   console.log('Execute \'writeToFile\'.')
   const s3Bucket = process.env.S3_BUCKET || cfg.s3Bucket
@@ -61,11 +131,16 @@ function writeToFile(content) {
     console.log(`Save results to file '${resultsFile}'.`)
     fs.writeFile(resultsFile, content, 'utf8', (err) => {
       if (err) {
-        return console.log(err)
+        console.log(err, err.stack)
+        throw new Error('Failed to save results.')
       }
       return console.log('The file was saved!')
     })
   }
+}
+
+function getDate() {
+  return new Date().toISOString().substring(0, 10)
 }
 
 function parseSharedParams(sharedParams, sharedParamsInfo) {
@@ -107,6 +182,7 @@ function parseSharedParams(sharedParams, sharedParamsInfo) {
     subsystems: subsystemCount,
     securityServers: securityServerCount,
     memberClasses: memberClassArr,
+    date: getDate(),
   }
   // Stringify results
   const json = JSON.stringify(results, null, 4)
@@ -246,5 +322,24 @@ module.exports = {
       }).catch((error) => {
         console.log(error)
       })
+  },
+  fromS3ToDynamo(bucket, key) {
+    console.log('Execute \'fromS3ToDynamo\'.')
+    const s3 = new AWS.S3()
+    s3.getObject({
+      Bucket: bucket,
+      Key: key,
+    }, (err, response) => {
+      if (err) {
+        console.log(err, err.stack)
+        throw new Error(`Failed to obejct file (${bucket}/${key}) from S3.`)
+      } else {
+        console.log(response.Body.toString())
+        const responseObject = JSON.parse(response.Body.toString())
+        console.log(`Succesfully read obejct (${bucket}/${key}) from S3.`)
+        // Write data to DynamoDB and delete object from S3
+        writeCurrentToDynamoDb(responseObject, bucket, key)
+      }
+    })
   },
 }

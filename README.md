@@ -43,7 +43,8 @@ file. The output method is configurable. This is how the results look like:
             "memberClass": "EDU",
             "memberCount": 2
         }
-    ]
+    ],
+    "date": "2018-12-29"
 }
 ```
 
@@ -104,3 +105,35 @@ over configuration file.
 
 **N.B.!** Configure only 1) `config.anchorPath` OR 2) `config.url`, but NOT both
 at the same time. In case both are configured `config.anchorPath` is used.
+
+## Advanced Version
+
+More advanced version of the script can be deployed on AWS using Serverless
+framework. The advanced version collects stats from defined X-Road
+instances, stores them in DynamoDB and publishes a REST/json API for accessing
+the data.
+
+### Deploy
+
+`serverless deploy` or `sls deploy`. `sls` is shorthand for the Serverless CLI
+command.
+
+**N.B.!** When deploying for the first time, two commands must be issued in the
+order below. The second command (`sls s3deploy`) attaches `s3:ObjectCreated`
+event to the S3 bucket where collected stats are stored. More
+[information](https://www.npmjs.com/package/serverless-plugin-existing-s3) about
+`serverless-plugin-existing-s3` Node.js plugin.
+
+```
+sls deploy
+sls s3deploy
+```
+
+If you want to update a function code without changing the CloudFormation stack you can use `deploy function` deployment method. This deployment method does not touch your AWS CloudFormation Stack. Instead, it simply overwrites the zip file of the current function on AWS. This method is much faster, since it does not rely on CloudFormation.
+
+```
+serverless deploy function --function collectAndStoreStats
+serverless deploy function --function processStats
+```
+
+More [information](https://serverless.com/framework/docs/providers/aws/guide/deploying/) about different deployment options.
