@@ -134,6 +134,8 @@ If you want to update a function code without changing the CloudFormation stack 
 ```
 serverless deploy function --function collectAndStoreStats
 serverless deploy function --function processStats
+serverless deploy function --function listInstanceIdentifiers
+serverless deploy function --function getStatsByInstanceIdentifier
 ```
 
 More [information](https://serverless.com/framework/docs/providers/aws/guide/deploying/) about different deployment options.

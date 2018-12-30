@@ -31,6 +31,18 @@ const url = require('url')
 const uuidv4 = require('uuid/v4')
 const AWS = require('aws-sdk')
 
+function validateInstanceIdentifier(instanceIdentifier) {
+  const pattern = /^[\w-]{1,255}$/g
+  return instanceIdentifier.match(pattern)
+}
+
+function generateHttpResponse(statusCode, body) {
+  return {
+    statusCode,
+    body: JSON.stringify(body),
+  }
+}
+
 function deleteFromS3(bucket, key) {
   console.log('Execute \'deleteFromS3\'.')
   const s3 = new AWS.S3()
@@ -48,7 +60,65 @@ function deleteFromS3(bucket, key) {
   })
 }
 
+function readCurrentFromDynamoDb(instanceIdentifier, callback) {
+  console.log('Execute \'readCurrentFromDynamoDb\'.')
+  const dynamoTableCurrent = process.env.DYNAMO_TABLE_CURRENT
+
+  if (!dynamoTableCurrent) {
+    console.log(`"dynamoTableCurrent": ${dynamoTableCurrent}`)
+    throw new Error('DynamoDB table "dynamoTableCurrent" is not configured correctly.')
+  }
+
+  const docClient = new AWS.DynamoDB.DocumentClient()
+
+  docClient.get({
+    TableName: dynamoTableCurrent,
+    Key: {
+      instanceIdentifier,
+    },
+  }, (err, data) => {
+    if (err) {
+      console.log(err, err.stack)
+      callback(new Error('Internal server error'))
+    } else {
+      console.log('Successfully read item from DynamoDB.')
+      callback(null, generateHttpResponse(data.Item ? 200 : 404, data.Item ? data.Item : {}))
+    }
+  })
+}
+
+function readInstanceIdentifiersFromDynamoDB(callback) {
+  console.log('Execute \'readInstanceIdentifiersFromDynamoDB\'.')
+  const dynamoTableCurrent = process.env.DYNAMO_TABLE_CURRENT
+
+  if (!dynamoTableCurrent) {
+    console.log(`"dynamoTableCurrent": ${dynamoTableCurrent}`)
+    throw new Error('DynamoDB table "dynamoTableCurrent" is not configured correctly.')
+  }
+
+  const docClient = new AWS.DynamoDB.DocumentClient()
+
+  // N.B. Scan only scans up to 1MB of data, so this code will not work on
+  // databases larger than 1MB.
+  docClient.scan({
+    TableName: dynamoTableCurrent,
+  }, (err, data) => {
+    if (err) {
+      console.log(err, err.stack)
+      callback(new Error('Internal server error'))
+    } else {
+      console.log('Successfully read items from DynamoDB.')
+      const results = []
+      data.Items.forEach((item) => {
+        results.push({ instanceIdentifier: item.instanceIdentifier })
+      })
+      callback(null, generateHttpResponse(200, results))
+    }
+  })
+}
+
 function writeHistoryToDynamoDb(data, bucket, key) {
+  console.log('Execute \'writeHistoryToDynamoDb\'.')
   const dynamoTableHistory = process.env.DYNAMO_TABLE_HISTORY
 
   if (!dynamoTableHistory) {
@@ -75,6 +145,7 @@ function writeHistoryToDynamoDb(data, bucket, key) {
 }
 
 function writeCurrentToDynamoDb(data, bucket, key) {
+  console.log('Execute \'writeCurrentToDynamoDb\'.')
   const dynamoTableCurrent = process.env.DYNAMO_TABLE_CURRENT
 
   if (!dynamoTableCurrent) {
@@ -341,5 +412,18 @@ module.exports = {
         writeCurrentToDynamoDb(responseObject, bucket, key)
       }
     })
+  },
+  readStatsByInstanceIdentifier(instanceIdentifier, callback) {
+    console.log('Execute \'readStatsByInstanceIdentifier\'.')
+    if (!validateInstanceIdentifier(instanceIdentifier)) {
+      console.log(`Instance identifier '${instanceIdentifier}' failed validation.`)
+      callback(null, generateHttpResponse(400, { message: 'Forbidden characters in instance identifier value.' }))
+    } else {
+      readCurrentFromDynamoDb(instanceIdentifier, callback)
+    }
+  },
+  readInstanceIdentifiers(callback) {
+    console.log('Execute \'readStatsByInstanceIdentifier\'.')
+    readInstanceIdentifiersFromDynamoDB(callback)
   },
 }
