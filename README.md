@@ -113,6 +113,29 @@ framework. The advanced version collects stats from defined X-Road
 instances, stores them in DynamoDB and publishes a REST/json API for accessing
 the data.
 
+The advanced version includes four AWS lambda functions:
+
+* `collectAndStoreStats`
+  * Fetches global configuration from one or more X-Road instances, extracts
+  selected metrics and stores them in `json` file in an S3 bucket.
+  * Runs based on defined schedule, e.g. once a day.
+  * More than one X-Road instance is added repeating `events` => `schedule` configuration
+  under `functions` => `collectAndStoreStats` in `serverless.yml`.
+* `processStats`
+  * Reads metrics from S3 bucket, stores them in DynamoDB and removes the `json`
+  file from S3.
+  * Runs every time when a new `.json` file is added in S3.
+  * When processing is working as expected, the S3 bucket should be always empty.
+* `listInstanceIdentifiers`
+  * Implements a REST/JSON API for getting a list of instance identifiers of
+  X-Road instances which metrics are available through the API.
+  * Is invoked using `HTTP [GET]` request.
+* `getStatsByInstanceIdentifier`
+  * Implements a REST/JSON API for getting a metrics of a specified X-Road
+  instance.
+  * Is invoked using `HTTP [GET]` request. X-Road instance is defined using a
+  path parameter.
+
 ### Deploy
 
 `serverless deploy` or `sls deploy`. `sls` is shorthand for the Serverless CLI
