@@ -11,16 +11,14 @@ provider:
   stage: prod
   runtime: nodejs6.10
   versionFunctions: false
-  environment:
-    S3_BUCKET: ${self:custom.s3bucket}
-    RANDOM_RESULTS_FILE: true
-    DYNAMO_TABLE_CURRENT: ${self:custom.dynamoTableCurrent}
-    DYNAMO_TABLE_HISTORY: ${self:custom.dynamoTableHistory}
 functions:
   collectAndStoreStats:
     name: collectAndStoreStats
     handler: handler.collectAndStoreStats
     role: CollectAndStoreStatsRole
+    environment:
+      S3_BUCKET: ${self:custom.s3bucket}
+      RANDOM_RESULTS_FILE: true
     events:
     - schedule:
         name: <INSTANCE_IDENTIFIER>
@@ -33,6 +31,10 @@ functions:
     name: processStats
     handler: handler.processStats
     role: ProcessStatsRole
+    environment:
+      S3_BUCKET: ${self:custom.s3bucket}
+      DYNAMO_TABLE_CURRENT: ${self:custom.dynamoTableCurrent}
+      DYNAMO_TABLE_HISTORY: ${self:custom.dynamoTableHistory}
     events:
       - existingS3:
           bucket: ${self:custom.s3bucket}
@@ -44,6 +46,9 @@ functions:
     name: listInstanceIdentifiers
     handler: handler.listInstanceIdentifiers
     role: StatsAPIRole
+    environment:
+      DYNAMO_TABLE_CURRENT: ${self:custom.dynamoTableCurrent}
+      DYNAMO_TABLE_HISTORY: ${self:custom.dynamoTableHistory}
     events:
       - http:
           path: v1/instances
@@ -54,6 +59,9 @@ functions:
     name: getStatsByInstanceIdentifier
     handler: handler.getStatsByInstanceIdentifier
     role: StatsAPIRole
+    environment:
+      DYNAMO_TABLE_CURRENT: ${self:custom.dynamoTableCurrent}
+      DYNAMO_TABLE_HISTORY: ${self:custom.dynamoTableHistory}
     events:
       - http:
           path: v1/instances/{instanceIdentifier}
@@ -65,7 +73,7 @@ functions:
               paths:
                 instanceIdentifier: true
 package:
-  individually: true
+  individually: false
   include:
     - node_modules/**
     - config.js
