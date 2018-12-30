@@ -110,7 +110,7 @@ at the same time. In case both are configured `config.anchorPath` is used.
 
 More advanced version of the script can be deployed on AWS using Serverless
 framework. The advanced version collects stats from defined X-Road
-instances, stores them in DynamoDB and publishes a REST/json API for accessing
+instances, stores them in DynamoDB and publishes a REST/JSON API for accessing
 the data.
 
 ![](images/architecture.png)
@@ -127,7 +127,7 @@ The advanced version includes four AWS lambda functions:
   * Reads metrics from S3 bucket, stores them in DynamoDB and removes the `json`
   file from S3.
   * Runs every time when a new `.json` file is added in S3.
-  * When processing is working as expected, the S3 bucket should be always empty.
+  * When processing is working as expected, the S3 bucket should always be empty.
 * `listInstanceIdentifiers`
   * Implements a REST/JSON API for getting a list of instance identifiers of
   X-Road instances which metrics are available through the API.
