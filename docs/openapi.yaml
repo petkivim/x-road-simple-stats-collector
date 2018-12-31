@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: X-Road Simple Statistics API
-  description: This API provides some basic statistics about X-Road instances.
+  description: This API provides some basic statistics about X-Road instances - member count, Security Server count, subsystem count and list of member classes with member count per member class.
   contact:
     email: <EMAIL>
   license:
@@ -68,25 +68,31 @@ components:
         instanceIdentifier:
           pattern: ^[\w-]{1,255}$
           type: string
+          description: X-Road instance identifier
           example: FI
         subsystems:
           type: integer
+          description: subsystem count
           format: int32
           example: 100
         securityServers:
           type: integer
+          description: Security Server count
           format: int32
           example: 50
         members:
           type: integer
+          description: member count
           format: int32
           example: 30
         date:
           pattern: ^\d{4}-\d{2}-\d{2}$
           type: string
+          description: date when the data was updated
           example: 2018-08-29
         memberClasses:
           type: array
+          description: list of member classes
           items:
             $ref: '#/components/schemas/MemberClass'
     MemberClass:
@@ -97,9 +103,11 @@ components:
       properties:
         memberClass:
           type: string
+          description: member class name
           example: GOV
         memberCount:
           type: integer
+          description: number of members in this member class
           format: int32
           example: 50
     InstanceIdentifier:
@@ -109,4 +117,5 @@ components:
       properties:
         instanceIdentifier:
           type: string
+          description: X-Road instance identifier
           example: FI
