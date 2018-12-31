@@ -1,0 +1,112 @@
+openapi: 3.0.0
+info:
+  title: X-Road Simple Statistics API
+  description: This API provides some basic statistics about X-Road instances.
+  contact:
+    email: <EMAIL>
+  license:
+    name: CC BY 4.0
+    url: https://creativecommons.org/licenses/by/4.0/
+  version: 1.0.0
+servers:
+- url: https://<HOST>
+  description: X-Road Statisctics
+paths:
+  /instances:
+    get:
+      summary: get list of available instance identifiers
+      description: |
+        Get instance identifiers of instances which statistics are available through the API
+      responses:
+        200:
+          description: list of instance identifiers which statistics are available
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InstanceIdentifier'
+  /instances/{instanceIdentifier}:
+    get:
+      summary: get statistics
+      description: |
+        Get statistics related to a specific X-Road instance
+      parameters:
+      - name: instanceIdentifier
+        in: path
+        description: instance identifier of an X-Road instance
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        200:
+          description: statistics related to the specified X-Road instance
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/StatisticItem'
+        400:
+          description: bad input parameter
+        404:
+          description: instance not found
+components:
+  schemas:
+    StatisticItem:
+      required:
+      - date
+      - instanceIdentifier
+      - memberClasses
+      - members
+      - securityServers
+      - subsystems
+      type: object
+      properties:
+        instanceIdentifier:
+          pattern: ^[\w-]{1,255}$
+          type: string
+          example: FI
+        subsystems:
+          type: integer
+          format: int32
+          example: 100
+        securityServers:
+          type: integer
+          format: int32
+          example: 50
+        members:
+          type: integer
+          format: int32
+          example: 30
+        date:
+          pattern: ^\d{4}-\d{2}-\d{2}$
+          type: string
+          example: 2018-08-29
+        memberClasses:
+          type: array
+          items:
+            $ref: '#/components/schemas/MemberClass'
+    MemberClass:
+      required:
+      - memberClass
+      - memberCount
+      type: object
+      properties:
+        memberClass:
+          type: string
+          example: GOV
+        memberCount:
+          type: integer
+          format: int32
+          example: 50
+    InstanceIdentifier:
+      required:
+      - instanceIdentifier
+      type: object
+      properties:
+        instanceIdentifier:
+          type: string
+          example: FI
