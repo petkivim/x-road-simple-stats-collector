@@ -51,7 +51,7 @@ functions:
       DYNAMO_TABLE_HISTORY: ${self:custom.dynamoTableHistory}
     events:
       - http:
-          path: v1/instances
+          path: instances
           method: get
           private: false
           cors: true
@@ -64,7 +64,7 @@ functions:
       DYNAMO_TABLE_HISTORY: ${self:custom.dynamoTableHistory}
     events:
       - http:
-          path: v1/instances/{instanceIdentifier}
+          path: instances/{instanceIdentifier}
           method: get
           private: false
           cors: true
