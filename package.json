@@ -1,6 +1,6 @@
 {
   "name": "x-road-simple-stats-collector",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A simple statistics collector for the X-Road that reads the number of members, security servers, subsystems and number of members per member class from global configuration",
   "main": "index.js",
   "scripts": {
