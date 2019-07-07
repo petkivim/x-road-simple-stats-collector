@@ -115,7 +115,7 @@ the data.
 
 ![](images/architecture.png)
 
-The advanced version includes four AWS lambda functions:
+The advanced version includes five AWS lambda functions:
 
 * `collectAndStoreStats`
   * Fetches global configuration from one or more X-Road instances, extracts
