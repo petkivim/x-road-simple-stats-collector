@@ -90,6 +90,41 @@ function readCurrentFromDynamoDb(instanceIdentifier, callback) {
   })
 }
 
+function readHistoryFromDynamoDb(instanceIdentifier, callback) {
+  console.log('Execute \'readHistoryFromDynamoDb\'.')
+  const dynamoTableHistory = process.env.DYNAMO_TABLE_HISTORY
+
+  if (!dynamoTableHistory) {
+    console.log(`"dynamoTableHistory": ${dynamoTableHistory}`)
+    throw new Error('DynamoDB table "dynamoTableHistory" is not configured correctly.')
+  }
+
+  const docClient = new AWS.DynamoDB.DocumentClient()
+
+  docClient.query({
+    TableName: dynamoTableHistory,
+    KeyConditionExpression: 'instanceIdentifier = :instanceIdentifier',
+    ScanIndexForward: true,
+    ExpressionAttributeValues: {
+      ':instanceIdentifier': instanceIdentifier,
+    },
+  }, (err, data) => {
+    if (err) {
+      console.log(err, err.stack)
+      callback(new Error('Internal server error'))
+    } else {
+      console.log('Successfully queried items from DynamoDB.')
+      const responseArr = []
+      if (data.Count > 0) {
+        data.Items.forEach((item) => {
+          if (item.date.match(/^[\d]{4}-[\d]{2}-01$/g)) responseArr.push(item)
+        })
+      }
+      callback(null, generateHttpResponse(data.Count > 0 ? 200 : 404, responseArr))
+    }
+  })
+}
+
 function readInstanceIdentifiersFromDynamoDB(callback) {
   console.log('Execute \'readInstanceIdentifiersFromDynamoDB\'.')
   const dynamoTableCurrent = process.env.DYNAMO_TABLE_CURRENT
@@ -423,6 +458,15 @@ module.exports = {
       callback(null, generateHttpResponse(400, { message: 'Forbidden characters in instance identifier value.' }))
     } else {
       readCurrentFromDynamoDb(instanceIdentifier, callback)
+    }
+  },
+  readStatsHistoryByInstanceIdentifier(instanceIdentifier, callback) {
+    console.log('Execute \'readStatsHistoryByInstanceIdentifier\'.')
+    if (!validateInstanceIdentifier(instanceIdentifier)) {
+      console.log(`Instance identifier '${instanceIdentifier}' failed validation.`)
+      callback(null, generateHttpResponse(400, { message: 'Forbidden characters in instance identifier value.' }))
+    } else {
+      readHistoryFromDynamoDb(instanceIdentifier, callback)
     }
   },
   readInstanceIdentifiers(callback) {

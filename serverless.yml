@@ -72,6 +72,23 @@ functions:
             parameters:
               paths:
                 instanceIdentifier: true
+  getStatsHistoryByInstanceIdentifier:
+    name: getStatsHistoryByInstanceIdentifier
+    handler: handler.getStatsHistoryByInstanceIdentifier
+    role: StatsAPIRole
+    environment:
+      DYNAMO_TABLE_CURRENT: ${self:custom.dynamoTableCurrent}
+      DYNAMO_TABLE_HISTORY: ${self:custom.dynamoTableHistory}
+    events:
+      - http:
+          path: instances/{instanceIdentifier}/history
+          method: get
+          private: false
+          cors: true
+          request:
+            parameters:
+              paths:
+                instanceIdentifier: true
 package:
   individually: false
   include:

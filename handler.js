@@ -74,6 +74,17 @@ module.exports.getStatsByInstanceIdentifier = (event, context, callback) => {
   console.timeEnd('x-road-simple-stats-collector')
 }
 
+module.exports.getStatsHistoryByInstanceIdentifier = (event, context, callback) => {
+  console.time('x-road-simple-stats-collector')
+  // console.log('Reading options from event:\n', util.inspect(event, { depth: 5 }))
+  const { instanceIdentifier } = event.pathParameters
+
+  console.log(`Read path parameter 'instanceIdentifier': ${instanceIdentifier}`)
+
+  tools.readStatsHistoryByInstanceIdentifier(instanceIdentifier, callback)
+  console.timeEnd('x-road-simple-stats-collector')
+}
+
 module.exports.listInstanceIdentifiers = (event, context, callback) => {
   console.time('x-road-simple-stats-collector')
   // console.log('Reading options from event:\n', util.inspect(event, { depth: 5 }))

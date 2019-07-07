@@ -28,7 +28,7 @@ paths:
                   $ref: '#/components/schemas/InstanceIdentifier'
   /instances/{instanceIdentifier}:
     get:
-      summary: get statistics
+      summary: get current statistics
       description: |
         Get statistics related to a specific X-Road instance
       parameters:
@@ -46,7 +46,32 @@ paths:
           content:
             application/json:
               schema:
-                type: object
+                $ref: '#/components/schemas/StatisticItem'
+        400:
+          description: bad input parameter
+        404:
+          description: instance not found
+  /instances/{instanceIdentifier}/history:
+    get:
+      summary: get historical monthly statistics
+      description: |
+        Get historical monthly statistics related to a specific X-Road instance
+      parameters:
+      - name: instanceIdentifier
+        in: path
+        description: instance identifier of an X-Road instance
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        200:
+          description: historical monthly statistics related to the specified X-Road instance
+          content:
+            application/json:
+              schema:
+                type: array
                 items:
                   $ref: '#/components/schemas/StatisticItem'
         400:
