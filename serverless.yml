@@ -92,12 +92,11 @@ functions:
                 instanceIdentifier: true
 package:
   individually: false
-  include:
-    - node_modules/**
-    - config.js
-    - functions.js
-  exclude:
-    - index.js
+  patterns:
+    - 'node_modules/**'
+    - 'config.js'
+    - 'functions.js'
+    - '!index.js'
 resources:
   Resources:
     S3Assets:
