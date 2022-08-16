@@ -1,4 +1,5 @@
 service: x-road-simple-stats-collector
+configValidationMode: warn
 custom:
   s3bucket: <S3_BUCKET>
   dynamoTableCurrent: statsCurrentTable
