@@ -10,7 +10,7 @@ provider:
   name: aws
   region: eu-central-1
   stage: prod
-  runtime: nodejs12.x
+  runtime: nodejs14.x
   versionFunctions: false
 functions:
   collectAndStoreStats:
